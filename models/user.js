@@ -51,19 +51,20 @@ class User {
   }
 
   static async all() {
-
+    const result = await db.query(`
+      SELECT username, first_name, last_name, phone 
+      FROM users`);
+    return result.rows[0];
   }
 
-  /** Get: get user by username
-   *
-   * returns {username,
-   *          first_name,
-   *          last_name,
-   *          phone,
-   *          join_at,
-   *          last_login_at } */
-
-  static async get(username) { }
+  static async get(username) {
+    const result = await db.query(`
+      SELECT username, first_name, last_name, phone 
+      FROM users 
+      WHERE username=$1`, 
+      [username])
+    return result.rows[0];
+  }
 
   /** Return messages from this user.
    *
@@ -73,8 +74,15 @@ class User {
    *   {username, first_name, last_name, phone}
    */
 
-  static async messagesFrom(username) { }
+  static async messagesFrom(username) {
+    const result = await db.query()
+    return result.rows[0];
+  }
 
+  static async messagesTo(username) {
+    const result = await db.query()
+    return result.rows[0];
+  }
   /** Return messages to this user.
    *
    * [{id, from_user, body, sent_at, read_at}]
