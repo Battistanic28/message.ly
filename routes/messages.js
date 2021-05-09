@@ -1,3 +1,9 @@
+const express = require("express");
+const db = require("../db");
+
+const User = require("../models/message");
+
+const router = new express.Router();
 /** GET /:id - get detail of message.
  *
  * => {message: {id,
@@ -27,4 +33,4 @@
  * Make sure that the only the intended recipient can mark as read.
  *
  **/
-
+ module.exports = router;
