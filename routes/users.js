@@ -17,7 +17,6 @@ router.get("/", async function(req, res, next) {
     }
 });
 
-
 router.get("/:username", async function(req, res, next) {
     try {
         const username = req.params.username;
@@ -36,7 +35,7 @@ router.get("/:username/to", async function(req, res, next) {
         const username = req.params.username;
         const messages = await User.messagesTo(username);
         if (!messages) {
-            throw new ExpressError(`User ${messages} not found.`, 404)
+            throw new ExpressError(`No messages found to user ${username}.`, 404)
         }
         return res.json(messages);
     } catch(e) {
@@ -44,24 +43,17 @@ router.get("/:username/to", async function(req, res, next) {
     }
 })
 
-/** GET /:username/to - get messages to user
- *
- * => {messages: [{id,
- *                 body,
- *                 sent_at,
- *                 read_at,
- *                 from_user: {username, first_name, last_name, phone}}, ...]}
- *
- **/
+router.get("/:username/from", async function(req, res, next) {
+    try {
+        const username = req.params.username;
+        const messages = await User.messagesFrom({username});
+        if (!messages) {
+            throw new ExpressError(`No messages found from user ${username}.`, 404)
+        }
+        return res.json({messages});
+    } catch(e) {
+        return next(e);
+    }
+})
 
-
-/** GET /:username/from - get messages from user
- *
- * => {messages: [{id,
- *                 body,
- *                 sent_at,
- *                 read_at,
- *                 to_user: {username, first_name, last_name, phone}}, ...]}
- *
- **/
 module.exports = router;
