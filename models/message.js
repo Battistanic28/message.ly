@@ -8,9 +8,6 @@ const ExpressError = require("../expressError");
 
 class Message {
 
-  /** register new message -- returns
-   *    {id, from_username, to_username, body, sent_at}
-   */
 
   static async create({from_username, to_username, body}) {
     const result = await db.query(
@@ -42,14 +39,6 @@ class Message {
 
     return result.rows[0];
   }
-
-  /** Get: get message by id
-   *
-   * returns {id, from_user, to_user, body, sent_at, read_at}
-   *
-   * both to_user and from_user = {username, first_name, last_name, phone}
-   *
-   */
 
   static async get(id) {
     const result = await db.query(
