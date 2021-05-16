@@ -20,25 +20,20 @@ router.post("/register", async function (req, res, next) {
 });
 
 router.post("/login", async function (req, res, next) {
-    try {
-        const {username, password} = req.body;
-        const result = await db.query(`
-            SELECT password 
-            FROM users 
-            WHERE username=$1`,
-            [username]);
-        const user = result.rows[0];
-
-        if (user) {
-            if (await bcrypt.compare(password, user.password) === true) {
-                User.updateLoginTimestamp(username);
-                return res.json({message: "Logged in!"})
-            }
-        }
-        throw new ExpressError("Invalid user/password", 400);
-    } catch(e) {
-        return next(e);
+  try {
+    let {username, password} = req.body;
+    if (await User.authenticate(username, password)) {
+      let token = jwt.sign({username}, SECRET_KEY);
+      User.updateLoginTimestamp(username);
+      return res.json({token});
+    } else {
+      throw new ExpressError("Invalid username/password", 400);
     }
-})
+  }
+
+  catch (err) {
+    return next(err);
+  }
+});
 
  module.exports = router;

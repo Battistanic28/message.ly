@@ -1,23 +1,24 @@
 const express = require("express");
 const db = require("../db");
 const ExpressError = require("../expressError");
+const {ensureLoggedIn, ensureCorrectUser} = require("../middleware/auth");
 
 const User = require("../models/user");
 
 const router = new express.Router();
 
 
-router.get("/", async function(req, res, next) {
+router.get("/", ensureLoggedIn, async function(req, res, next) {
     try {
         const users = await User.all();
-        return res.json({users})
+        return res.json({users});
     } 
     catch(e) {
         return next(e);
     }
 });
 
-router.get("/:username", async function(req, res, next) {
+router.get("/:username", ensureCorrectUser, async function(req, res, next) {
     try {
         const username = req.params.username;
         const user = await User.get(username);
@@ -30,7 +31,7 @@ router.get("/:username", async function(req, res, next) {
     }
 })
 
-router.get("/:username/to", async function(req, res, next) {
+router.get("/:username/to", ensureCorrectUser, async function(req, res, next) {
     try {
         const username = req.params.username;
         const messages = await User.messagesTo(username);
@@ -43,7 +44,7 @@ router.get("/:username/to", async function(req, res, next) {
     }
 })
 
-router.get("/:username/from", async function(req, res, next) {
+router.get("/:username/from", ensureCorrectUser, async function(req, res, next) {
     try {
         const username = req.params.username;
         const messages = await User.messagesFrom({username});

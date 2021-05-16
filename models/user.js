@@ -29,15 +29,7 @@ class User {
       FROM users WHERE username=$1`, 
       [username])
     const user = results.rows[0];
-    if (user) {
-      if (await bcrypt.compare(password, user.password)) {
-        const token = jwt.sign({username}, SECRET_KEY);
-        return results.json({message:`Logged in!`, token})
-      }
-    }
-    throw new ExpressError("Invalid username/password", 400);
-  } catch(e) {
-    return next(e);
+    return user && await bcrypt.compare(password, user.password);
   }
 
 
@@ -54,7 +46,7 @@ class User {
     const result = await db.query(`
       SELECT username, first_name, last_name, phone 
       FROM users`);
-    return result.rows[0];
+    return result.rows;
   }
 
   static async get(username) {
